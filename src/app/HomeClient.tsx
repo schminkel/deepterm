@@ -8,8 +8,11 @@ import FeaturesShowcase from "@/components/FeaturesShowcase";
 import StepsSection from "@/components/StepsSection";
 import FAQSection from "@/components/FAQSection";
 import CaptchaModal from "@/components/CaptchaModal";
+import LoginDialog from "@/components/LoginDialog";
 import { createClient } from "@/config/supabase/client";
 import type { User } from "@supabase/supabase-js";
+
+const isDev = process.env.NODE_ENV === "development";
 
 async function handleGoogleLogin() {
   const supabase = createClient();
@@ -31,6 +34,7 @@ const imgPlanet1 = "/assets/planet1.webp";
 export default function HomeClient() {
   const [user, setUser] = useState<User | null>(null);
   const [showCaptcha, setShowCaptcha] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const hasCheckedRef = useRef(false);
   const sitekey = process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY;
 
@@ -52,7 +56,9 @@ export default function HomeClient() {
   }, []);
 
   const handleLoginClick = () => {
-    if (sitekey) {
+    if (isDev) {
+      setShowLoginDialog(true);
+    } else if (sitekey) {
       setShowCaptcha(true);
     } else {
       handleGoogleLogin();
@@ -229,6 +235,14 @@ export default function HomeClient() {
         onClose={() => setShowCaptcha(false)}
         onVerify={handleCaptchaVerify}
       />
+
+      {/* Login Dialog (development only) */}
+      {isDev && (
+        <LoginDialog
+          isOpen={showLoginDialog}
+          onClose={() => setShowLoginDialog(false)}
+        />
+      )}
     </div>
   );
 }
