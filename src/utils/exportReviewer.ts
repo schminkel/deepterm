@@ -1,4 +1,3 @@
-import { jsPDF } from "jspdf";
 import {
   Document,
   Packer,
@@ -31,6 +30,7 @@ interface ExportOptions {
 }
 
 export async function exportToPDF({ title, terms, categories }: ExportOptions) {
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ orientation: "portrait", unit: "in", format: "letter" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
