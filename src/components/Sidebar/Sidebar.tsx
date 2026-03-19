@@ -184,7 +184,7 @@ export default function Sidebar() {
                         )}
                         <div className={`min-w-0 ml-3 transition-all duration-300 overflow-hidden ${sidebarPinned ? "md:opacity-100 md:max-w-[150px] md:ml-3" : "md:opacity-0 md:max-w-0 md:ml-0 md:group-hover:opacity-100 md:group-hover:max-w-[150px] md:group-hover:ml-3"}`}>
                             <p className="font-sans text-[14px] font-medium text-[#171d2b] truncate">
-                                {profile?.full_name || "Loading..."}
+                                {profile ? (profile.full_name || profile.email?.split('@')[0] || "My Account") : "Loading..."}
                             </p>
                         </div>
                     </button>
