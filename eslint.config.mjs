@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ignore local Supabase Docker workspace files
+    "supabase-docker/**",
   ]),
   {
     files: ["src/app/layout.tsx"],
