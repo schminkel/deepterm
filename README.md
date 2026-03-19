@@ -308,7 +308,8 @@ CRON_SECRET=your_cron_secret
 
 1. Create a new Supabase project at [supabase.com](https://supabase.com)
 2. Run `src/lib/supabase/schema.sql` and `supabase-rls-policies.sql` in the SQL Editor (Dashboard > SQL Editor)
-3. Configure Google OAuth:
+3. Run `src/lib/supabase/egress-optimization.sql` to create the batched RPC functions (`get_dashboard_data`, `log_study_activity`, etc.)
+4. Configure Google OAuth:
    - Go to **Authentication > Providers > Google**
    - Enable Google provider
    - Paste your Google Client ID and Client Secret
@@ -331,14 +332,14 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start development server |
-| `bun run build` | Build for production |
-| `bun run start` | Start production server |
-| `bun run lint` | Run ESLint |
-| `bun test` | Run tests |
-| `bun test --watch` | Run tests in watch mode |
+| Command            | Description              |
+| ------------------ | ------------------------ |
+| `bun run dev`      | Start development server |
+| `bun run build`    | Build for production     |
+| `bun run start`    | Start production server  |
+| `bun run lint`     | Run ESLint               |
+| `bun test`         | Run tests                |
+| `bun test --watch` | Run tests in watch mode  |
 
 ## Testing
 
