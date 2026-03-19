@@ -200,7 +200,7 @@ export default function MaterialsClient({ initialItems }: MaterialsClientProps) 
                                             <MoreVertical size={14} />
                                         </button>
                                         {openMenuId === item.id && (
-                                            <div 
+                                            <div
                                                 className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-[#171d2b]/10 py-1 z-50 min-w-[120px]"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
