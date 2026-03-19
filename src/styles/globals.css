@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../../src";
+@source not "../../supabase-docker";
 @plugin "@tailwindcss/typography";
 
 @theme inline {
@@ -20,4 +22,3 @@ body {
     overflow-x: hidden;
     font-family: var(--font-sans);
 }
-
