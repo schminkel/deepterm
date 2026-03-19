@@ -41,31 +41,31 @@ export default function ShareModal({ isOpen, onClose, materialId, materialType, 
   const createShare = async () => {
     setLoading(true)
     setCodeError("")
-    
+
     try {
       const body: Record<string, string> = { materialType, materialId }
       if (customCode.trim()) {
         body.customCode = customCode.trim().toLowerCase()
       }
-      
+
       const res = await fetch('/api/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      
+
       const data = await res.json()
-      
+
       if (res.status === 409) {
         setCodeError("This code is already taken")
         return
       }
-      
+
       if (data.error) {
         setCodeError(typeof data.error === 'string' ? data.error : 'Invalid code format')
         return
       }
-      
+
       setShare(data.share)
       setCustomCode("")
     } catch {
@@ -78,7 +78,7 @@ export default function ShareModal({ isOpen, onClose, materialId, materialType, 
   const toggleShare = async () => {
     if (!share) return
     setLoading(true)
-    
+
     try {
       const res = await fetch('/api/share', {
         method: 'PATCH',
@@ -98,26 +98,26 @@ export default function ShareModal({ isOpen, onClose, materialId, materialType, 
     if (!share || !customCode.trim()) return
     setLoading(true)
     setCodeError("")
-    
+
     try {
       const res = await fetch('/api/share', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ shareId: share.id, newCode: customCode.trim().toLowerCase() }),
       })
-      
+
       const data = await res.json()
-      
+
       if (res.status === 409) {
         setCodeError("This code is already taken")
         return
       }
-      
+
       if (data.error) {
         setCodeError(typeof data.error === 'string' ? data.error : 'Invalid code format')
         return
       }
-      
+
       setShare(data.share)
       setCustomCode("")
       setIsEditing(false)
@@ -238,14 +238,12 @@ export default function ShareModal({ isOpen, onClose, materialId, materialType, 
                 <button
                   onClick={toggleShare}
                   disabled={loading}
-                  className={`relative w-12 h-6 rounded-full transition-colors ${
-                    share.is_active ? 'bg-green-500' : 'bg-gray-300'
-                  }`}
-                >
-                  <span 
-                    className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                      share.is_active ? 'left-7' : 'left-1'
+                  className={`relative w-12 h-6 rounded-full transition-colors ${share.is_active ? 'bg-green-500' : 'bg-gray-300'
                     }`}
+                >
+                  <span
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${share.is_active ? 'left-7' : 'left-1'
+                      }`}
                   />
                 </button>
               </div>

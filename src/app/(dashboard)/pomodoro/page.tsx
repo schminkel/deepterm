@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, type ChangeEvent } from "react";
 import { Confetti, EncouragementToast } from "@/components/EmotionalAssets";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePomodoroStore } from "@/lib/stores";
@@ -197,17 +197,17 @@ export default function PomodoroPage() {
   }, []);
 
   // Handle background image upload with compression
-  const handleBgUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBgUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     const MAX_WIDTH = 1920;
     const MAX_HEIGHT = 1080;
     const QUALITY = 0.7;
-    
+
     const reader = new FileReader();
     reader.onload = (event) => {
-      const img = new Image();
+      const img = document.createElement("img");
       img.onload = () => {
         let { width, height } = img;
         if (width > MAX_WIDTH) {
@@ -218,16 +218,16 @@ export default function PomodoroPage() {
           width = (width * MAX_HEIGHT) / height;
           height = MAX_HEIGHT;
         }
-        
+
         const canvas = document.createElement("canvas");
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
-        
+
         ctx.drawImage(img, 0, 0, width, height);
         const compressedDataUrl = canvas.toDataURL("image/jpeg", QUALITY);
-        
+
         try {
           localStorage.setItem(POMODORO_BG_KEY, compressedDataUrl);
           setCustomBgImage(compressedDataUrl);
@@ -389,7 +389,7 @@ export default function PomodoroPage() {
   // Update browser tab title with timer when running
   useEffect(() => {
     const defaultTitle = "Pomodoro Timer | DeepTerm";
-    
+
     if (isRunning) {
       const phaseLabel = PHASE_LABELS[phase];
       document.title = `${formatTime(timeLeft)} - ${phaseLabel} | DeepTerm`;
@@ -436,8 +436,8 @@ export default function PomodoroPage() {
               onChange={handleBgUpload}
               className="hidden"
             />
-            
-            <div 
+
+            <div
               ref={fullscreenRef}
               className={`${getPhaseColor()} rounded-[24px] p-6 sm:p-10 text-center text-white relative overflow-hidden transition-colors duration-500 ${isFullscreen ? "!rounded-none min-h-screen flex flex-col justify-center" : ""}`}
               style={customBgImage ? {
@@ -525,11 +525,10 @@ export default function PomodoroPage() {
               <div className="flex justify-center gap-4 relative z-10">
                 <button
                   onClick={handleToggleTimer}
-                  className={`px-6 h-[48px] rounded-full font-sans font-medium text-[14px] transition-all hover:scale-105 active:scale-95 ${
-                    isRunning
-                      ? "bg-white/20 text-white hover:bg-white/30"
-                      : "bg-white text-[#171d2b] hover:bg-white/90 shadow-lg"
-                  }`}
+                  className={`px-6 h-[48px] rounded-full font-sans font-medium text-[14px] transition-all hover:scale-105 active:scale-95 ${isRunning
+                    ? "bg-white/20 text-white hover:bg-white/30"
+                    : "bg-white text-[#171d2b] hover:bg-white/90 shadow-lg"
+                    }`}
                 >
                   {isRunning ? "Pause" : "Start"}
                 </button>
@@ -578,7 +577,7 @@ export default function PomodoroPage() {
                         <input type="range" min="1" max="60" value={settings.longBreakDuration} onChange={(e) => setSettings({ longBreakDuration: Number(e.target.value) })} className="w-full accent-white" />
                       </div>
                     </div>
-                    
+
                     {/* Sound Settings in Fullscreen */}
                     <div className="mt-4 pt-4 border-t border-white/10">
                       <h4 className="font-sans font-medium text-[14px] text-white mb-3">Sound Settings</h4>
@@ -630,7 +629,7 @@ export default function PomodoroPage() {
                           placeholder="Add a task..."
                           className="flex-1 h-[36px] px-3 rounded-full bg-white/5 text-white font-sans text-[12px] placeholder:text-white/40 focus:outline-none focus:bg-white/10"
                         />
-                        <button 
+                        <button
                           onClick={() => {
                             const newState = !showReminderInput;
                             setShowReminderInput(newState);
@@ -639,13 +638,12 @@ export default function PomodoroPage() {
                               const localDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
                               setNewTaskReminder(localDateTime);
                             }
-                          }} 
+                          }}
                           title="Set reminder"
-                          className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors ${
-                            showReminderInput || newTaskReminder
-                              ? "bg-[#171d2b] text-white"
-                              : "bg-white/5 text-white/70 hover:bg-white/10"
-                          }`}
+                          className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors ${showReminderInput || newTaskReminder
+                            ? "bg-[#171d2b] text-white"
+                            : "bg-white/5 text-white/70 hover:bg-white/10"
+                            }`}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                         </button>
@@ -653,7 +651,7 @@ export default function PomodoroPage() {
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         </button>
                       </div>
-                      
+
                       {/* Reminder Input */}
                       <AnimatePresence>
                         {showReminderInput && (
@@ -677,7 +675,7 @@ export default function PomodoroPage() {
                                   className="flex-1 h-[32px] px-2 rounded bg-white/5 text-white font-sans text-[11px] focus:outline-none focus:bg-white/10 [color-scheme:dark]"
                                 />
                                 {newTaskReminder && (
-                                  <button 
+                                  <button
                                     onClick={() => setNewTaskReminder(null)}
                                     className="p-1 rounded text-white/50 hover:text-white hover:bg-white/10"
                                   >
@@ -709,9 +707,8 @@ export default function PomodoroPage() {
                             >
                               <button
                                 onClick={() => toggleTask(task.id)}
-                                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                                  task.completed ? "bg-[#171d2b] border-[#171d2b]" : "border-white/30 hover:border-white"
-                                }`}
+                                className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${task.completed ? "bg-[#171d2b] border-[#171d2b]" : "border-white/30 hover:border-white"
+                                  }`}
                               >
                                 {task.completed && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                               </button>
@@ -866,7 +863,7 @@ export default function PomodoroPage() {
                     placeholder="Add a task..."
                     className="flex-1 h-[40px] px-3 rounded-lg border border-[#171d2b]/20 bg-white font-sans text-[13px] text-[#171d2b] placeholder:text-[#171d2b]/40 focus:outline-none focus:border-[#171d2b]/40 transition-shadow focus:shadow-sm"
                   />
-                  <button 
+                  <button
                     onClick={() => {
                       const newState = !showReminderInput;
                       setShowReminderInput(newState);
@@ -875,13 +872,12 @@ export default function PomodoroPage() {
                         const localDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
                         setNewTaskReminder(localDateTime);
                       }
-                    }} 
+                    }}
                     title="Set reminder"
-                    className={`w-[40px] h-[40px] rounded-lg flex items-center justify-center transition-colors ${
-                      showReminderInput || newTaskReminder
-                        ? "bg-[#171d2b] text-white"
-                        : "bg-[#171d2b]/10 text-[#171d2b] hover:bg-[#171d2b]/20"
-                    }`}
+                    className={`w-[40px] h-[40px] rounded-lg flex items-center justify-center transition-colors ${showReminderInput || newTaskReminder
+                      ? "bg-[#171d2b] text-white"
+                      : "bg-[#171d2b]/10 text-[#171d2b] hover:bg-[#171d2b]/20"
+                      }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                   </button>
@@ -889,7 +885,7 @@ export default function PomodoroPage() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                   </button>
                 </div>
-                
+
                 {/* Reminder DateTime Input */}
                 <AnimatePresence>
                   {showReminderInput && (
@@ -913,7 +909,7 @@ export default function PomodoroPage() {
                             className="flex-1 h-[36px] px-2 rounded border border-[#171d2b]/20 bg-white text-[#171d2b] font-sans text-[12px] focus:outline-none focus:border-[#171d2b]/40"
                           />
                           {newTaskReminder && (
-                            <button 
+                            <button
                               onClick={() => setNewTaskReminder(null)}
                               className="p-1.5 rounded text-[#171d2b]/50 hover:text-[#171d2b] hover:bg-[#171d2b]/10"
                             >

@@ -92,9 +92,9 @@ export default function PracticeSettingsModal({ isOpen, onClose, onSave, totalCa
                                 </span>
                                 <select
                                     value={settings.cardCount}
-                                    onChange={(e) => setSettings(prev => ({ 
-                                        ...prev, 
-                                        cardCount: e.target.value === "max" ? "max" : Number(e.target.value) 
+                                    onChange={(e) => setSettings(prev => ({
+                                        ...prev,
+                                        cardCount: e.target.value === "max" ? "max" : Number(e.target.value)
                                     }))}
                                     className="p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#171d2b]"
                                 >

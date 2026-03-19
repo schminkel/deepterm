@@ -573,20 +573,20 @@ export default function PracticePage() {
                                             disabled={settings.answerFeedback && showAnswer}
                                             defaultValue={currentQuestion.userAnswer || ""}
                                             key={`fillblank-${currentQuestionIndex}`}
-                                            onBlur={e => {
+                                            onBlur={(e) => {
                                                 // Auto-save on blur in exam mode
-                                                if (!settings.answerFeedback && e.target.value.trim()) {
-                                                    handleAnswer(e.target.value);
+                                                if (!settings.answerFeedback && e.currentTarget.value.trim()) {
+                                                    handleAnswer(e.currentTarget.value);
                                                 }
                                             }}
-                                            onKeyDown={e => {
+                                            onKeyDown={(e) => {
                                                 if (e.key === "Enter" && !(settings.answerFeedback && showAnswer)) {
-                                                    handleAnswer((e.target as HTMLInputElement).value);
+                                                    handleAnswer(e.currentTarget.value);
                                                 }
                                             }}
                                             className={`w-full p-4 rounded-xl border-2 focus:outline-none text-lg bg-white placeholder:text-gray-400 ${currentQuestion.userAnswer
-                                                    ? 'border-[#171d2b] bg-gray-50'
-                                                    : 'border-gray-200 focus:border-[#171d2b]'
+                                                ? 'border-[#171d2b] bg-gray-50'
+                                                : 'border-gray-200 focus:border-[#171d2b]'
                                                 }`}
                                         />
                                         {!(settings.answerFeedback && showAnswer) && !currentQuestion.userAnswer && (
@@ -668,8 +668,8 @@ export default function PracticePage() {
                                     }}
                                     disabled={questions.some(q => q.userAnswer === undefined)}
                                     className={`px-6 sm:px-8 py-2 sm:py-3 rounded-full font-bold transition-colors text-sm sm:text-base ${questions.some(q => q.userAnswer === undefined)
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-[#2D9F83] text-white hover:bg-[#258a70]'
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-[#2D9F83] text-white hover:bg-[#258a70]'
                                         }`}
                                 >
                                     Finish Test
@@ -679,8 +679,8 @@ export default function PracticePage() {
                                     onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length - 1, prev + 1))}
                                     disabled={currentQuestion?.userAnswer === undefined}
                                     className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold transition-colors text-sm sm:text-base ${currentQuestion?.userAnswer === undefined
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-[#171d2b] text-white hover:bg-[#2a3347]'
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-[#171d2b] text-white hover:bg-[#2a3347]'
                                         }`}
                                 >
                                     Next
