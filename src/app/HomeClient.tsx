@@ -12,8 +12,6 @@ import LoginDialog from "@/components/LoginDialog";
 import { createClient } from "@/config/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
-const isDev = process.env.NODE_ENV === "development";
-
 async function handleGoogleLogin() {
   const supabase = createClient();
   await supabase.auth.signInWithOAuth({
@@ -36,7 +34,6 @@ export default function HomeClient() {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const hasCheckedRef = useRef(false);
-  const sitekey = process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY;
 
   useEffect(() => {
     if (hasCheckedRef.current) return;
@@ -56,13 +53,7 @@ export default function HomeClient() {
   }, []);
 
   const handleLoginClick = () => {
-    if (isDev) {
-      setShowLoginDialog(true);
-    } else if (sitekey) {
-      setShowCaptcha(true);
-    } else {
-      handleGoogleLogin();
-    }
+    setShowLoginDialog(true);
   };
 
   const handleCaptchaVerify = () => {
@@ -236,13 +227,11 @@ export default function HomeClient() {
         onVerify={handleCaptchaVerify}
       />
 
-      {/* Login Dialog (development only) */}
-      {isDev && (
-        <LoginDialog
-          isOpen={showLoginDialog}
-          onClose={() => setShowLoginDialog(false)}
-        />
-      )}
+      {/* Login Dialog */}
+      <LoginDialog
+        isOpen={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+      />
     </div>
   );
 }

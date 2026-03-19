@@ -8,21 +8,8 @@ import { createClient } from "@/config/supabase/client";
 import { useUIStore } from "@/lib/stores";
 import { useScrolled } from "@/lib/hooks";
 import CaptchaModal from "@/components/CaptchaModal";
+import LoginDialog from "@/components/LoginDialog";
 import type { User } from "@supabase/supabase-js";
-
-async function handleGoogleLogin() {
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-            queryParams: {
-                access_type: "offline",
-                prompt: "consent",
-            },
-        },
-    });
-}
 
 const LEARN_ITEMS = [
     { label: "Pomodoro", href: "/pomodoro" },
@@ -52,7 +39,7 @@ function SessionAwareHeader({ user, isLoading, className }: { user: User | null;
     const isScrolled = useScrolled(20);
     const [isResourcesOpen, setIsResourcesOpen] = useState(false);
     const [showCaptcha, setShowCaptcha] = useState(false);
-    const sitekey = process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY;
+    const [showLoginDialog, setShowLoginDialog] = useState(false);
 
     // Use selector pattern to subscribe only to needed values - prevents re-renders on unrelated store changes (Rule 5.4)
     const isMenuOpen = useUIStore((state) => state.sidebarMobileOpen);
@@ -61,16 +48,11 @@ function SessionAwareHeader({ user, isLoading, className }: { user: User | null;
     const setIsLearnOpen = useUIStore((state) => state.setProfileMenuOpen);
 
     const handleLoginClick = () => {
-        if (sitekey) {
-            setShowCaptcha(true);
-        } else {
-            handleGoogleLogin();
-        }
+        setShowLoginDialog(true);
     };
 
     const handleCaptchaVerify = () => {
         setShowCaptcha(false);
-        handleGoogleLogin();
     };
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -260,6 +242,12 @@ function SessionAwareHeader({ user, isLoading, className }: { user: User | null;
                 isOpen={showCaptcha}
                 onClose={() => setShowCaptcha(false)}
                 onVerify={handleCaptchaVerify}
+            />
+
+            {/* Login Dialog */}
+            <LoginDialog
+                isOpen={showLoginDialog}
+                onClose={() => setShowLoginDialog(false)}
             />
         </header>
     );

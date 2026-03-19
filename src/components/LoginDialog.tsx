@@ -16,12 +16,16 @@ export default function LoginDialog({ isOpen, onClose }: Props) {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   const resetForm = useCallback(() => {
     setEmail('')
     setPassword('')
     setError('')
     setLoading(false)
+    setIsSignUp(false)
+    setSuccessMessage('')
   }, [])
 
   useEffect(() => {
@@ -47,14 +51,25 @@ export default function LoginDialog({ isOpen, onClose }: Props) {
     }
     setLoading(true)
     setError('')
+    setSuccessMessage('')
     try {
       const supabase = createClient()
-      const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
-      if (loginError) {
-        setError(`Login failed: ${loginError.message}`)
+      if (isSignUp) {
+        const { error: signUpError } = await supabase.auth.signUp({ email, password })
+        if (signUpError) {
+          setError(`Sign up failed: ${signUpError.message}`)
+        } else {
+          setSuccessMessage('Account created! Check your email to confirm, or try signing in.')
+          setIsSignUp(false)
+        }
       } else {
-        onClose()
-        router.push('/dashboard')
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+        if (loginError) {
+          setError(`Login failed: ${loginError.message}`)
+        } else {
+          onClose()
+          router.push('/dashboard')
+        }
       }
     } catch (err: unknown) {
       setError(`Unexpected error: ${err instanceof Error ? err.message : String(err)}`)
@@ -107,7 +122,7 @@ export default function LoginDialog({ isOpen, onClose }: Props) {
           <div className="flex items-center gap-2">
             <LogIn size={20} className="text-[#171d2b]" />
             <h2 id="login-dialog-title" className="font-sora font-bold text-lg text-[#171d2b]">
-              Sign In
+              {isSignUp ? 'Sign Up' : 'Sign In'}
             </h2>
           </div>
           <button
@@ -156,12 +171,23 @@ export default function LoginDialog({ isOpen, onClose }: Props) {
             <p className="text-sm text-red-600 font-sans">{error}</p>
           )}
 
+          {successMessage && (
+            <p className="text-sm text-green-600 font-sans">{successMessage}</p>
+          )}
+
           <button
             onClick={handleEmailLogin}
             disabled={loading}
             className="w-full h-[42px] rounded-[100px] bg-[#171d2b] text-white font-sora text-sm font-medium hover:bg-[#2a3347] transition-colors disabled:opacity-50"
           >
-            {loading ? 'Signing in…' : 'Sign In with Email'}
+            {loading ? (isSignUp ? 'Signing up…' : 'Signing in…') : (isSignUp ? 'Sign Up with Email' : 'Sign In with Email')}
+          </button>
+
+          <button
+            onClick={() => { setIsSignUp(!isSignUp); setError(''); setSuccessMessage('') }}
+            className="font-sans text-xs text-[#171d2b]/60 hover:text-[#171d2b] transition-colors"
+          >
+            {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
           </button>
 
           <div className="flex items-center gap-3">
