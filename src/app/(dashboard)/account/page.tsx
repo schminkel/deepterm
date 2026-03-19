@@ -15,7 +15,7 @@ interface Profile {
 async function fetchAccountProfile(): Promise<{ profile: Profile | null; fullName: string }> {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    
+
     if (!user) return { profile: null, fullName: "" };
 
     const { data } = await supabase
@@ -23,26 +23,26 @@ async function fetchAccountProfile(): Promise<{ profile: Profile | null; fullNam
         .select("id, full_name, email, avatar_url")
         .eq("id", user.id)
         .single();
-    
+
     const googleIdentity = user.identities?.find(i => i.provider === "google");
     const identityData = googleIdentity?.identity_data;
-    
-    const avatarUrl = 
-        data?.avatar_url || 
-        user.user_metadata?.avatar_url || 
+
+    const avatarUrl =
+        data?.avatar_url ||
+        user.user_metadata?.avatar_url ||
         user.user_metadata?.picture ||
         identityData?.avatar_url ||
         identityData?.picture;
-    
-    const fullName = 
-        data?.full_name || 
-        user.user_metadata?.full_name || 
+
+    const fullName =
+        data?.full_name ||
+        user.user_metadata?.full_name ||
         user.user_metadata?.name ||
         identityData?.full_name ||
         identityData?.name;
-    
+
     const email = data?.email || user.email;
-    
+
     return {
         profile: {
             id: user.id,
@@ -95,10 +95,10 @@ export default function AccountPage() {
     const handleDeleteAccount = async () => {
         setDeleting(true);
         setMessage(null);
-        
+
         const supabase = createClient();
         const { error } = await supabase.rpc("delete_user");
-        
+
         if (error) {
             setMessage({ type: "error", text: "Failed to delete account. Please try again." });
             setDeleting(false);
@@ -140,7 +140,7 @@ export default function AccountPage() {
             <div className="max-w-2xl">
                 <div className="bg-white rounded-2xl border border-[#171d2b]/10 p-6 mb-6">
                     <h2 className="font-serif text-[20px] text-[#171d2b] mb-6">Profile</h2>
-                    
+
                     <div className="flex items-center gap-6 mb-6">
                         {profile?.avatar_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
@@ -173,7 +173,7 @@ export default function AccountPage() {
                             <input
                                 type="text"
                                 value={formData.full_name}
-                                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, full_name: e.currentTarget.value })}
                                 className="w-full px-4 py-3 rounded-xl border border-[#171d2b]/10 bg-[#f0f0ea] font-sans text-[15px] text-[#171d2b] focus:outline-none focus:border-[#171d2b]/30 transition-colors"
                                 placeholder="Enter your name"
                             />
@@ -197,11 +197,10 @@ export default function AccountPage() {
                     </div>
 
                     {message && (
-                        <div className={`mt-4 px-4 py-3 rounded-xl font-sans text-[14px] ${
-                            message.type === "success" 
-                                ? "bg-green-50 text-green-700 border border-green-200" 
-                                : "bg-red-50 text-red-700 border border-red-200"
-                        }`}>
+                        <div className={`mt-4 px-4 py-3 rounded-xl font-sans text-[14px] ${message.type === "success"
+                            ? "bg-green-50 text-green-700 border border-green-200"
+                            : "bg-red-50 text-red-700 border border-red-200"
+                            }`}>
                             {message.text}
                         </div>
                     )}
